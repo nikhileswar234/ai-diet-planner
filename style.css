@@ -1,0 +1,17 @@
+body {
+  font-family: Arial;
+  background: #f4f6f8;
+  text-align: center;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 6px;
+}
+
+.week {
+  background: white;
+  margin: 15px;
+  padding: 10px;
+  border-radius: 8px;
+}

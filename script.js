@@ -40,7 +40,7 @@ async function generate() {
   `;
 
   try {
-    const response = await fetch("https://ai-diet-planner-zw7x.onrender.com/generate", {
+   const response = await fetch("https://ai-diet-planner-zw7x.onrender.com/generate", {
 
       method: "POST",
       headers: {
@@ -92,4 +92,5 @@ function downloadPDF() {
   link.download = "Diet_Plan.txt";
   link.click();
 }
+
 

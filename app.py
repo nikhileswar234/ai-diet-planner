@@ -10,7 +10,7 @@ CORS(app)
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # ✅ Use latest working model
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-1.5-pro")
 
 
 @app.route("/")
@@ -66,3 +66,4 @@ def generate_plan():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+

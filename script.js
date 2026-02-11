@@ -1,40 +1,58 @@
-function generate() {
-  const data = {
-    age: +age.value,
-    weight: +weight.value,
-    height: +height.value,
-    goal: goal.value,
-    food: food.value,
-    duration: duration.value
-  };
+document.addEventListener("DOMContentLoaded", function () {
 
-  fetch("https://ai-diet-planner-zw7x.onrender.com", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.json())
-  .then(data => {
-    let html = `<h3>Daily Calories: ${data.calories}</h3>`;
+    const button = document.querySelector("button");
+    const resultDiv = document.getElementById("result");
 
-    for (let section in data.plan) {
-      html += `<h2>${section}</h2>`;
-      for (let week in data.plan[section]) {
-        html += `<div class="week"><h4>${week}</h4>`;
-        const days = data.plan[section][week];
-        for (let day in days) {
-          html += `<b>${day}</b><br>`;
-          for (let meal in days[day]) {
-            html += `${meal}: ${days[day][meal]}<br>`;
-          }
-          html += "<hr>";
+    button.addEventListener("click", function () {
+
+        const age = document.getElementById("age").value;
+        const weight = document.getElementById("weight").value;
+        const height = document.getElementById("height").value;
+        const goal = document.getElementById("goal").value;
+        const dietType = document.getElementById("dietType").value;
+        const duration = document.getElementById("duration").value;
+
+        if (!age || !weight || !height) {
+            resultDiv.innerHTML = "⚠ Please fill all fields properly.";
+            return;
         }
-        html += "</div>";
-      }
-    }
 
-    result.innerHTML = html;
-  });
-}
+        resultDiv.innerHTML = "⏳ Generating your AI diet plan... Please wait (first request may take 30 sec)";
 
+        fetch("https://ai-diet-planner-zw7x.onrender.com/generate-plan", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                age: age,
+                weight: weight,
+                height: height,
+                goal: goal,
+                dietType: dietType,
+                duration: duration
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.plan) {
+                resultDiv.innerHTML = `
+                    <h2>Your Personalized Diet Plan 🥗</h2>
+                    <pre style="white-space: pre-wrap; font-family: Arial;">
+${data.plan}
+                    </pre>
+                `;
+            } else if (data.error) {
+                resultDiv.innerHTML = "❌ Error: " + data.error;
+            } else {
+                resultDiv.innerHTML = "⚠ Something went wrong.";
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            resultDiv.innerHTML = "❌ Server not responding. Please try again.";
+        });
 
+    });
+
+});

@@ -1,49 +1,68 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
 import os
+import google.generativeai as genai
 
 app = Flask(__name__)
 CORS(app)
 
-# 🔐 Load API key from Render Environment
+# ✅ Load Gemini API key from environment variable
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# ✅ Automatically select available Gemini model
-def get_available_model():
-    models = genai.list_models()
-    for m in models:
-        if "generateContent" in m.supported_generation_methods:
-            return m.name
-    return None
-
-model_name = get_available_model()
-
-if model_name:
-    model = genai.GenerativeModel(model_name)
-else:
-    model = None
-
+# ✅ Use working Gemini model
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 @app.route("/")
 def home():
-    return "AI Diet Planner Backend Running 🚀"
+    return "AI Diet Planner Backend Running ✅"
 
-
-@app.route("/generate-plan", methods=["POST"])
-def generate_plan():
+@app.route("/generate", methods=["POST"])
+def generate():
     try:
-        if not model:
-            return jsonify({"error": "No supported Gemini model found for this API key"}), 500
-
-        data = request.get_json()
+        data = request.json
 
         age = data.get("age")
         weight = data.get("weight")
         height = data.get("height")
         goal = data.get("goal")
-        diet_type = data.get("dietType")
+        food = data.get("food")
         duration = data.get("duration")
 
         if not age or not weight or not height:
-            return jsonify({"error": "Missing required
+            return jsonify({"error": "Missing required fields"}), 400
+
+        prompt = f"""
+        Create a detailed {duration}-day diet plan.
+
+        User Details:
+        Age: {age}
+        Weight: {weight} kg
+        Height: {height} cm
+        Goal: {goal}
+        Food Preference: {food}
+
+        Include:
+        - Breakfast
+        - Lunch
+        - Dinner
+        - Snacks
+        - Estimated daily calories
+        - Protein intake
+
+        Make it clean and structured.
+        """
+
+        response = model.generate_content(prompt)
+
+        return jsonify({
+            "result": response.text
+        })
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

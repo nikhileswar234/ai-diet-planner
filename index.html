@@ -1,38 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>AI Diet Planner</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+function generate() {
 
-<h1>🥗 AI Diet Planner</h1>
+    const age = document.getElementById("age").value;
+    const weight = document.getElementById("weight").value;
+    const height = document.getElementById("height").value;
+    const goal = document.getElementById("goal").value;
+    const food = document.getElementById("food").value;
+    const duration = document.getElementById("duration").value;
 
-<input type="number" id="age" placeholder="Age">
-<input type="number" id="weight" placeholder="Weight (kg)">
-<input type="number" id="height" placeholder="Height (cm)">
+    const resultDiv = document.getElementById("result");
 
-<select id="goal">
-  <option value="loss">Weight Loss</option>
-  <option value="gain">Weight Gain</option>
-  <option value="muscle">Muscle Gain</option>
-</select>
+    if (!age || !weight || !height) {
+        resultDiv.innerHTML = "⚠ Please fill all details.";
+        return;
+    }
 
-<select id="food">
-  <option value="veg">Vegetarian</option>
-  <option value="nonveg">Non-Vegetarian</option>
-</select>
+    resultDiv.innerHTML = "⏳ Generating your AI diet plan... (Please wait 20-40 seconds if server is sleeping)";
 
-<select id="duration">
-  <option value="30">30 Days</option>
-  <option value="90">3 Months</option>
-</select>
-
-<button onclick="generate()">Generate Plan</button>
-
-<div id="result"></div>
-
-<script src="script.js"></script>
-</body>
-</html>
-
+    fetch("https://ai-diet-planner-zw7x.onrender.com/generate-plan", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            age: age,
+            weight: weight,
+            height: height,
+            goal: goal,
+            dietType: food,
+            duration: duration
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.plan) {
+            resultDiv.innerHTML = `
+                <h2>Your Personalized Diet Plan 🥗</h2>
+                <pre style="white-space: pre-wrap;">${data.plan}</pre>
+            `;
+        } else if (data.error) {
+            resultDiv.innerHTML = "❌ Error: " + data.error;
+        } else {
+            resultDiv.innerHTML = "⚠ Something went wrong.";
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        resultDiv.innerHTML = "❌ Server error. Please try again.";
+    });
+}

@@ -6,21 +6,36 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# 🔐 Load Gemini API Key from Environment Variable
+# Load API key
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# ✅ Use latest working model
-model = genai.GenerativeModel("gemini-1.5-pro")
+# ✅ Auto-select model
+def get_available_model():
+    models = genai.list_models()
+    for m in models:
+        if "generateContent" in m.supported_generation_methods:
+            return m.name
+    return None
+
+model_name = get_available_model()
+
+if model_name:
+    model = genai.GenerativeModel(model_name)
+else:
+    model = None
 
 
 @app.route("/")
 def home():
-    return "AI Diet Planner Backend is Running 🚀"
+    return "AI Diet Planner Backend Running 🚀"
 
 
 @app.route("/generate-plan", methods=["POST"])
 def generate_plan():
     try:
+        if not model:
+            return jsonify({"error": "No supported Gemini model found for this API key"}), 500
+
         data = request.get_json()
 
         age = data.get("age")
@@ -30,30 +45,25 @@ def generate_plan():
         diet_type = data.get("dietType")
         duration = data.get("duration")
 
-        if not age or not weight or not height:
-            return jsonify({"error": "Missing required fields"}), 400
-
-        # 🧠 Prompt for Gemini
         prompt = f"""
-        Create a detailed Indian diet plan for:
+        Create a structured Indian diet plan.
 
         Age: {age}
         Weight: {weight} kg
         Height: {height} cm
         Goal: {goal}
-        Food Preference: {diet_type}
+        Food Type: {diet_type}
         Duration: {duration} days
 
         Include:
-        - Morning routine
         - Breakfast
         - Lunch
-        - Evening snack
+        - Snacks
         - Dinner
-        - Basic workout suggestion
-        - Approximate calorie guidance
+        - Workout suggestion
+        - Calories guidance
 
-        Make it structured and easy to read.
+        Make it clean and formatted.
         """
 
         response = model.generate_content(prompt)
@@ -66,4 +76,3 @@ def generate_plan():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
-

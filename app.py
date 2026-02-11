@@ -1,52 +1,74 @@
+import os
+import google.generativeai as genai
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from ai_engine import generate_week_plan
 
 app = Flask(__name__)
 CORS(app)
 
-def calculate_calories(weight, height, age, goal):
-    bmr = 10 * weight + 6.25 * height - 5 * age + 5
-    calories = bmr * 1.55  # moderate activity
+# ==============================
+# Configure Gemini API
+# ==============================
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-    if goal == "loss":
-        calories -= 500
-    elif goal == "gain":
-        calories += 300
-    elif goal == "muscle":
-        calories += 400
+model = genai.GenerativeModel("gemini-1.0-pro")
 
-    return int(calories)
+# ==============================
+# ROOT ROUTE (Fixes 404)
+# ==============================
+@app.route("/")
+def home():
+    return "AI Diet Planner Backend is Running 🚀"
 
+# ==============================
+# Generate Diet Plan Route
+# ==============================
 @app.route("/generate-plan", methods=["POST"])
 def generate_plan():
-    data = request.json
+    try:
+        data = request.json
 
-    age = data["age"]
-    weight = data["weight"]
-    height = data["height"]
-    goal = data["goal"]
-    food = data["food"]
-    duration = data["duration"]
+        weight = data.get("weight")
+        height = data.get("height")
+        age = data.get("age")
+        goal = data.get("goal")
+        diet_type = data.get("dietType")
+        duration = data.get("duration")
 
-    calories = calculate_calories(weight, height, age, goal)
+        prompt = f"""
+        Create a detailed Indian {diet_type} diet plan.
 
-    week_plan = generate_week_plan(age, weight, height, goal, calories, food)
+        User Details:
+        - Weight: {weight} kg
+        - Height: {height} cm
+        - Age: {age}
+        - Goal: {goal}
+        - Duration: {duration}
 
-    if duration == "30":
-        plan = {f"Week {i}": week_plan for i in range(1, 5)}
+        Include:
+        - Breakfast
+        - Lunch
+        - Evening Snacks
+        - Dinner
+        - Approx calories
+        - Protein rich options
+        - Weekly variation
+        """
 
-    else:  # 3 months
-        plan = {
-            "Month 1": {f"Week {i}": week_plan for i in range(1, 5)},
-            "Month 2": {f"Week {i}": week_plan for i in range(1, 5)},
-            "Month 3": {f"Week {i}": week_plan for i in range(1, 5)}
-        }
+        response = model.generate_content(prompt)
 
-    return jsonify({
-        "calories": calories,
-        "plan": plan
-    })
+        return jsonify({
+            "plan": response.text
+        })
 
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# ==============================
+# Run App (for local testing)
+# ==============================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

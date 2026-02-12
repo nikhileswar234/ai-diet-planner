@@ -1,34 +1,33 @@
 const backendURL = "https://ai-diet-planner-otbr.onrender.com/generate";
-let currentUnit = "cm";
+
+let useFeet = false;
 let latestPlan = "";
 
+// Dark mode
 document.addEventListener("DOMContentLoaded", function () {
 
-  const toggle = document.getElementById("darkToggle");
-
-  toggle.addEventListener("click", function () {
+  const darkBtn = document.getElementById("darkToggle");
+  darkBtn.addEventListener("click", function () {
     document.body.classList.toggle("dark");
   });
 
+  const toggle = document.getElementById("unitToggle");
+
+  toggle.addEventListener("change", function () {
+
+    useFeet = toggle.checked;
+
+    document.getElementById("heightCm").style.display =
+      useFeet ? "none" : "block";
+
+    document.getElementById("heightFeet").style.display =
+      useFeet ? "block" : "none";
+
+    document.getElementById("cmLabel").classList.toggle("active", !useFeet);
+    document.getElementById("feetLabel").classList.toggle("active", useFeet);
+  });
+
 });
-
-function setUnit(unit) {
-  currentUnit = unit;
-  const heightInput = document.getElementById("height");
-
-  if (unit === "cm") {
-    heightInput.placeholder = "Height (cm)";
-  } else {
-    heightInput.placeholder = "Height (feet)";
-  }
-}
-
-function convertToCm(height) {
-  if (currentUnit === "feet") {
-    return height * 30.48;
-  }
-  return height;
-}
 
 function calculateBMI(weight, heightCm) {
   const h = heightCm / 100;
@@ -39,9 +38,15 @@ function generatePlan() {
 
   const age = document.getElementById("age").value;
   const weight = document.getElementById("weight").value;
-  let height = document.getElementById("height").value;
 
-  height = convertToCm(height);
+  let height;
+
+  if (useFeet) {
+    const feet = document.getElementById("heightFeet").value;
+    height = feet * 30.48;
+  } else {
+    height = document.getElementById("heightCm").value;
+  }
 
   const goal = document.getElementById("goal").value;
   const dietType = document.getElementById("dietType").value;
@@ -78,11 +83,10 @@ function generatePlan() {
   });
 }
 
-function downloadPDF() {
-
-  const element = document.createElement("a");
-  const file = new Blob([latestPlan], { type: "text/plain" });
-  element.href = URL.createObjectURL(file);
-  element.download = "DietPlan.txt";
-  element.click();
+function downloadPlan() {
+  const blob = new Blob([latestPlan], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "DietPlan.txt";
+  link.click();
 }

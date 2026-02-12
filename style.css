@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f4f4f4;
   transition: 0.3s;
 }
@@ -14,10 +14,11 @@ body {
 }
 
 #darkToggle {
-  font-size: 22px;
-  padding: 8px 15px;
+  font-size: 20px;
+  padding: 8px 14px;
   border-radius: 10px;
   cursor: pointer;
+  border: none;
 }
 
 .card {
@@ -26,7 +27,7 @@ body {
   padding: 25px;
   border-radius: 20px;
   background: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   transition: 0.3s;
 }
 
@@ -35,6 +36,7 @@ input, select {
   padding: 10px;
   margin: 8px 0;
   border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 .generate-btn, #downloadBtn {
@@ -53,12 +55,69 @@ input, select {
   background: #2980b9;
 }
 
-.height-toggle button {
-  padding: 6px 12px;
-  margin-right: 5px;
-  cursor: pointer;
+.height-section {
+  margin-top: 5px;
 }
 
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.switch {
+  position: relative;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background-color: #27ae60;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-container span {
+  font-weight: bold;
+  opacity: 0.6;
+}
+
+.toggle-container span.active {
+  opacity: 1;
+}
+
+/* DARK MODE */
 body.dark {
   background: #121212;
   color: white;
@@ -66,10 +125,12 @@ body.dark {
 
 body.dark .card {
   background: #1f1f1f;
+  color: white;
 }
 
 body.dark input,
 body.dark select {
   background: #2c2c2c;
   color: white;
+  border: 1px solid #555;
 }

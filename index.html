@@ -13,21 +13,29 @@
 
   <div class="card">
 
-    <div class="height-toggle">
-      <button onclick="setUnit('cm')">CM</button>
-      <button onclick="setUnit('feet')">Feet</button>
-    </div>
-
     <input type="number" id="age" placeholder="Age">
     <input type="number" id="weight" placeholder="Weight (kg)">
-    <input type="number" id="height" placeholder="Height (cm)">
 
-  <select id="goal">
-  <option value="weight gain" selected>Weight Gain</option>
-  <option value="weight loss">Weight Loss</option>
-  <option value="muscle gain">Muscle Gain</option>
-</select>
+    <!-- Height Section -->
+    <div class="height-section">
+      <div class="toggle-container">
+        <span id="cmLabel" class="active">CM</span>
+        <label class="switch">
+          <input type="checkbox" id="unitToggle">
+          <span class="slider"></span>
+        </label>
+        <span id="feetLabel">Feet</span>
+      </div>
 
+      <input type="number" id="heightCm" placeholder="Height (cm)">
+      <input type="number" id="heightFeet" placeholder="Height (feet)" style="display:none;">
+    </div>
+
+    <select id="goal">
+      <option value="weight gain" selected>Weight Gain</option>
+      <option value="weight loss">Weight Loss</option>
+      <option value="muscle gain">Muscle Gain</option>
+    </select>
 
     <select id="dietType">
       <option value="veg">Vegetarian</option>
@@ -41,10 +49,7 @@
     </select>
 
     <button class="generate-btn" onclick="generatePlan()">Generate Plan</button>
-
-    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
-      Download PDF
-    </button>
+    <button id="downloadBtn" onclick="downloadPlan()" style="display:none;">Download Plan</button>
 
     <div id="result"></div>
   </div>

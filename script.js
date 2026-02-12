@@ -1,8 +1,15 @@
-function toggleDark() {
-  document.body.classList.toggle("dark");
+function login() {
+  const name = document.getElementById("username").value;
+  localStorage.setItem("user", name);
+  document.getElementById("loginBox").style.display = "none";
 }
 
-// Toggle height inputs
+window.onload = function() {
+  if (localStorage.getItem("user")) {
+    document.getElementById("loginBox").style.display = "none";
+  }
+};
+
 function toggleHeightInputs() {
   const unit = document.getElementById("heightUnit").value;
 
@@ -15,33 +22,37 @@ function toggleHeightInputs() {
   }
 }
 
+function calculateBMI(weight, heightCm) {
+  const heightM = heightCm / 100;
+  return (weight / (heightM * heightM)).toFixed(1);
+}
+
 function generate() {
   const age = document.getElementById("age").value;
   const weight = document.getElementById("weight").value;
-  const unit = document.getElementById("heightUnit").value;
   const goal = document.getElementById("goal").value;
   const food = document.getElementById("food").value;
   const duration = document.getElementById("duration").value;
 
   let height;
+  const unit = document.getElementById("heightUnit").value;
 
   if (unit === "cm") {
     height = document.getElementById("heightCm").value;
   } else {
-    const feet = document.getElementById("heightFt").value || 0;
-    const inches = document.getElementById("heightIn").value || 0;
-
-    // Convert to cm
-    height = (feet * 30.48) + (inches * 2.54);
+    const ft = document.getElementById("heightFt").value || 0;
+    const inch = document.getElementById("heightIn").value || 0;
+    height = (ft * 30.48) + (inch * 2.54);
   }
 
-  document.getElementById("result").innerText = "Generating plan... ⏳";
+  const bmi = calculateBMI(weight, height);
+
+  document.getElementById("result").innerText =
+    "Your BMI: " + bmi + "\nGenerating plan...\n\n";
 
   fetch("https://ai-diet-planner-otbr.onrender.com/generate", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       age,
       weight,
@@ -53,15 +64,20 @@ function generate() {
   })
   .then(res => res.json())
   .then(data => {
-    if (data.plan) {
-      document.getElementById("result").innerText = data.plan;
-    } else {
-      document.getElementById("result").innerText = "❌ Error generating plan.";
+    if (data.limit) {
+      document.getElementById("result").innerText = data.message;
+      return;
     }
-  })
-  .catch(error => {
+
     document.getElementById("result").innerText =
-      "❌ Unable to connect to server. Try again.";
+      "Your BMI: " + bmi + "\n\n" + data.plan +
+      "\n\nRemaining AI plans today: " + data.remaining;
+
+    localStorage.setItem("lastWeight", weight);
+  })
+  .catch(() => {
+    document.getElementById("result").innerText =
+      "Unable to connect. Try again.";
   });
 }
 

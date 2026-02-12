@@ -1,18 +1,17 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
+from google import genai
 
 app = Flask(__name__)
 CORS(app)
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-model = genai.GenerativeModel("gemini-pro")
+# Create Gemini client
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route("/")
 def home():
-    return "Backend Running 🚀"
+    return "AI Diet Planner Backend Running 🚀"
 
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -26,21 +25,43 @@ def generate():
         diet_type = data.get("dietType")
         duration = data.get("duration")
 
+        if not age or not weight or not height:
+            return jsonify({"error": "Missing required fields"}), 400
+
         prompt = f"""
-        Create a {duration}-day diet plan.
+        Create a professional {duration}-day Indian diet plan.
+
         Age: {age}
-        Weight: {weight}
-        Height: {height}
+        Weight: {weight} kg
+        Height: {height} cm
         Goal: {goal}
         Diet Type: {diet_type}
+
+        Include:
+        - Breakfast
+        - Lunch
+        - Snacks
+        - Dinner
+        - Approx daily calories
+        - Protein focus if muscle gain
+
+        Format clearly day-wise.
         """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt
+        )
 
-        return jsonify({"plan": response.text})
+        return jsonify({
+            "plan": response.text
+        })
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": str(e)
+        }), 500
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

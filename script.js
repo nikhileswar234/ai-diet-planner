@@ -1,38 +1,48 @@
 const backendURL = "https://ai-diet-planner-otbr.onrender.com/generate";
+let currentUnit = "cm";
+let latestPlan = "";
 
-function calculateBMI(weight, heightCm) {
-  const heightM = heightCm / 100;
-  const bmi = weight / (heightM * heightM);
-  return bmi.toFixed(1);
-}
+document.addEventListener("DOMContentLoaded", function () {
 
-function login() {
-  const name = document.getElementById("username").value;
-  localStorage.setItem("user", name);
-  document.getElementById("loginBox").style.display = "none";
-}
+  const toggle = document.getElementById("darkToggle");
 
-window.onload = function() {
-  if (localStorage.getItem("user")) {
-    document.getElementById("loginBox").style.display = "none";
-  }
+  toggle.addEventListener("click", function () {
+    document.body.classList.toggle("dark");
+  });
 
-  if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark");
-  }
-};
-
-document.getElementById("darkToggle").addEventListener("click", function() {
-  document.body.classList.toggle("dark");
-
-  const isDark = document.body.classList.contains("dark");
-  localStorage.setItem("darkMode", isDark);
 });
 
+function setUnit(unit) {
+  currentUnit = unit;
+  const heightInput = document.getElementById("height");
+
+  if (unit === "cm") {
+    heightInput.placeholder = "Height (cm)";
+  } else {
+    heightInput.placeholder = "Height (feet)";
+  }
+}
+
+function convertToCm(height) {
+  if (currentUnit === "feet") {
+    return height * 30.48;
+  }
+  return height;
+}
+
+function calculateBMI(weight, heightCm) {
+  const h = heightCm / 100;
+  return (weight / (h * h)).toFixed(1);
+}
+
 function generatePlan() {
+
   const age = document.getElementById("age").value;
   const weight = document.getElementById("weight").value;
-  const height = document.getElementById("height").value;
+  let height = document.getElementById("height").value;
+
+  height = convertToCm(height);
+
   const goal = document.getElementById("goal").value;
   const dietType = document.getElementById("dietType").value;
   const duration = document.getElementById("duration").value;
@@ -40,19 +50,12 @@ function generatePlan() {
   const bmi = calculateBMI(weight, height);
 
   document.getElementById("result").innerText =
-    "Your BMI: " + bmi + "\nGenerating plan...\n\n";
+    "Your BMI: " + bmi + "\nGenerating...\n";
 
   fetch(backendURL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      age,
-      weight,
-      height,
-      goal,
-      dietType,
-      duration
-    })
+    body: JSON.stringify({ age, weight, height, goal, dietType, duration })
   })
   .then(res => res.json())
   .then(data => {
@@ -62,16 +65,24 @@ function generatePlan() {
       return;
     }
 
+    latestPlan = data.plan;
+
     document.getElementById("result").innerText =
       "Your BMI: " + bmi + "\n\n" + data.plan;
 
-    if (data.remaining !== undefined) {
-      document.getElementById("result").innerText +=
-        "\n\nRemaining AI plans today: " + data.remaining;
-    }
+    document.getElementById("downloadBtn").style.display = "block";
   })
   .catch(() => {
     document.getElementById("result").innerText =
-      "❌ Unable to connect to server. Try again.";
+      "❌ Unable to connect to server.";
   });
+}
+
+function downloadPDF() {
+
+  const element = document.createElement("a");
+  const file = new Blob([latestPlan], { type: "text/plain" });
+  element.href = URL.createObjectURL(file);
+  element.download = "DietPlan.txt";
+  element.click();
 }

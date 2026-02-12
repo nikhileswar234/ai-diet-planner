@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #f4f4f4;
   transition: 0.3s;
 }
@@ -14,20 +14,19 @@ body {
 }
 
 #darkToggle {
-  background: white;
-  border: none;
-  padding: 6px 12px;
+  font-size: 22px;
+  padding: 8px 15px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 8px;
 }
 
 .card {
-  width: 400px;
+  width: 420px;
   margin: 40px auto;
   padding: 25px;
   border-radius: 20px;
   background: white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   transition: 0.3s;
 }
 
@@ -36,10 +35,9 @@ input, select {
   padding: 10px;
   margin: 8px 0;
   border-radius: 8px;
-  border: 1px solid #ccc;
 }
 
-.generate-btn {
+.generate-btn, #downloadBtn {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
@@ -49,20 +47,17 @@ input, select {
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
-  transition: 0.2s;
 }
 
-.generate-btn:hover {
-  transform: scale(1.05);
+#downloadBtn {
+  background: #2980b9;
 }
 
-#result {
-  margin-top: 20px;
-  white-space: pre-wrap;
-  font-size: 14px;
+.height-toggle button {
+  padding: 6px 12px;
+  margin-right: 5px;
+  cursor: pointer;
 }
-
-/* 🌙 DARK MODE */
 
 body.dark {
   background: #121212;
@@ -71,16 +66,10 @@ body.dark {
 
 body.dark .card {
   background: #1f1f1f;
-  color: white;
 }
 
 body.dark input,
 body.dark select {
   background: #2c2c2c;
   color: white;
-  border: 1px solid #555;
-}
-
-body.dark .top-bar {
-  background: #000;
 }

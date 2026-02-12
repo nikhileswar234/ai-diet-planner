@@ -1,3 +1,11 @@
+const backendURL = "https://ai-diet-planner-otbr.onrender.com/generate";
+
+function calculateBMI(weight, heightCm) {
+  const heightM = heightCm / 100;
+  const bmi = weight / (heightM * heightM);
+  return bmi.toFixed(1);
+}
+
 function login() {
   const name = document.getElementById("username").value;
   localStorage.setItem("user", name);
@@ -8,49 +16,33 @@ window.onload = function() {
   if (localStorage.getItem("user")) {
     document.getElementById("loginBox").style.display = "none";
   }
+
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
 };
 
-function toggleHeightInputs() {
-  const unit = document.getElementById("heightUnit").value;
+document.getElementById("darkToggle").addEventListener("click", function() {
+  document.body.classList.toggle("dark");
 
-  if (unit === "cm") {
-    document.getElementById("cmInput").style.display = "block";
-    document.getElementById("ftInput").style.display = "none";
-  } else {
-    document.getElementById("cmInput").style.display = "none";
-    document.getElementById("ftInput").style.display = "flex";
-  }
-}
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem("darkMode", isDark);
+});
 
-function calculateBMI(weight, heightCm) {
-  const heightM = heightCm / 100;
-  return (weight / (heightM * heightM)).toFixed(1);
-}
-
-function generate() {
+function generatePlan() {
   const age = document.getElementById("age").value;
   const weight = document.getElementById("weight").value;
+  const height = document.getElementById("height").value;
   const goal = document.getElementById("goal").value;
-  const food = document.getElementById("food").value;
+  const dietType = document.getElementById("dietType").value;
   const duration = document.getElementById("duration").value;
-
-  let height;
-  const unit = document.getElementById("heightUnit").value;
-
-  if (unit === "cm") {
-    height = document.getElementById("heightCm").value;
-  } else {
-    const ft = document.getElementById("heightFt").value || 0;
-    const inch = document.getElementById("heightIn").value || 0;
-    height = (ft * 30.48) + (inch * 2.54);
-  }
 
   const bmi = calculateBMI(weight, height);
 
   document.getElementById("result").innerText =
     "Your BMI: " + bmi + "\nGenerating plan...\n\n";
 
-  fetch("https://ai-diet-planner-otbr.onrender.com/generate", {
+  fetch(backendURL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -58,40 +50,28 @@ function generate() {
       weight,
       height,
       goal,
-      dietType: food,
+      dietType,
       duration
     })
   })
   .then(res => res.json())
   .then(data => {
+
     if (data.limit) {
       document.getElementById("result").innerText = data.message;
       return;
     }
 
     document.getElementById("result").innerText =
-      "Your BMI: " + bmi + "\n\n" + data.plan +
-      "\n\nRemaining AI plans today: " + data.remaining;
+      "Your BMI: " + bmi + "\n\n" + data.plan;
 
-    localStorage.setItem("lastWeight", weight);
+    if (data.remaining !== undefined) {
+      document.getElementById("result").innerText +=
+        "\n\nRemaining AI plans today: " + data.remaining;
+    }
   })
   .catch(() => {
     document.getElementById("result").innerText =
-      "Unable to connect. Try again.";
+      "❌ Unable to connect to server. Try again.";
   });
-}
-
-function downloadPDF() {
-  const content = document.getElementById("result").innerText;
-
-  if (!content) {
-    alert("Generate a plan first!");
-    return;
-  }
-
-  const blob = new Blob([content], { type: "application/pdf" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "AI_Diet_Plan.pdf";
-  link.click();
 }

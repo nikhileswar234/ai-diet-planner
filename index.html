@@ -19,7 +19,23 @@
     <div class="form-grid">
       <input type="number" id="age" placeholder="Age">
       <input type="number" id="weight" placeholder="Weight (kg)">
-      <input type="number" id="height" placeholder="Height (cm)">
+     <div class="height-wrapper">
+  
+  <select id="heightUnit" onchange="toggleHeightInputs()">
+    <option value="cm">Centimeters (cm)</option>
+    <option value="ft">Feet & Inches</option>
+  </select>
+
+  <div id="cmInput">
+    <input type="number" id="heightCm" placeholder="Height (cm)">
+  </div>
+
+  <div id="ftInput" style="display:none;">
+    <input type="number" id="heightFt" placeholder="Feet">
+    <input type="number" id="heightIn" placeholder="Inches">
+  </div>
+
+</div>
 
       <select id="goal">
         <option value="loss">Weight Loss</option>
@@ -55,3 +71,4 @@
 <script src="script.js"></script>
 </body>
 </html>
+

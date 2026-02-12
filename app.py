@@ -1,30 +1,25 @@
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
+from google import genai
 
 app = Flask(__name__)
 CORS(app)
 
 # ==============================
-# Configure Gemini API
+# Configure Gemini (NEW SDK)
 # ==============================
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-# Try safest stable model
-model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
-
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 # ==============================
-# Home Route (Health Check)
+# Home Route
 # ==============================
 @app.route("/")
 def home():
-    return "AI Diet Planner Backend is Running 🚀"
-
+    return "AI Diet Planner Backend Running 🚀"
 
 # ==============================
-# Generate Diet Plan Route
+# Generate Route
 # ==============================
 @app.route("/generate", methods=["POST"])
 def generate():
@@ -41,11 +36,10 @@ def generate():
         if not age or not weight or not height:
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Create smart prompt
         prompt = f"""
-        Create a professional {duration}-day diet plan.
+        Create a {duration}-day professional diet plan.
 
-        User Details:
+        User:
         Age: {age}
         Weight: {weight} kg
         Height: {height} cm
@@ -57,14 +51,16 @@ def generate():
         - Lunch
         - Snacks
         - Dinner
-        - Approximate calories per day
-        - Protein-rich suggestions if muscle gain
-        - Healthy balanced Indian-friendly foods
+        - Approximate daily calories
+        - Protein suggestions if muscle gain
 
         Format clearly day-wise.
         """
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=prompt,
+        )
 
         return jsonify({
             "plan": response.text
@@ -76,8 +72,5 @@ def generate():
         }), 500
 
 
-# ==============================
-# Run App
-# ==============================
 if __name__ == "__main__":
     app.run(debug=True)

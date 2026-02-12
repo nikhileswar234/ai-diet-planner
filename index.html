@@ -13,20 +13,21 @@
 
   <div class="card">
 
-    <div id="loginBox">
-      <input type="text" id="username" placeholder="Enter your name">
-      <button onclick="login()">Login</button>
+    <div class="height-toggle">
+      <button onclick="setUnit('cm')">CM</button>
+      <button onclick="setUnit('feet')">Feet</button>
     </div>
 
     <input type="number" id="age" placeholder="Age">
     <input type="number" id="weight" placeholder="Weight (kg)">
     <input type="number" id="height" placeholder="Height (cm)">
 
-    <select id="goal">
-      <option value="weight loss">Weight Loss</option>
-      <option value="muscle gain">Muscle Gain</option>
-      <option value="maintenance">Maintenance</option>
-    </select>
+  <select id="goal">
+  <option value="weight gain" selected>Weight Gain</option>
+  <option value="weight loss">Weight Loss</option>
+  <option value="muscle gain">Muscle Gain</option>
+</select>
+
 
     <select id="dietType">
       <option value="veg">Vegetarian</option>
@@ -40,6 +41,10 @@
     </select>
 
     <button class="generate-btn" onclick="generatePlan()">Generate Plan</button>
+
+    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
+      Download PDF
+    </button>
 
     <div id="result"></div>
   </div>

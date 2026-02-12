@@ -4,9 +4,11 @@ from flask_cors import CORS
 from google import genai
 
 app = Flask(__name__)
-CORS(app)
 
-# Create Gemini client
+# ✅ FIXED CORS for GitHub Pages
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# ✅ Create Gemini Client
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route("/")
@@ -39,7 +41,7 @@ def generate():
         - Lunch
         - Snacks
         - Dinner
-        - Approx daily calories
+        - Approximate daily calories
         """
 
         response = client.models.generate_content(

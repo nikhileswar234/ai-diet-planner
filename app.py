@@ -25,9 +25,6 @@ def generate():
         diet_type = data.get("dietType")
         duration = data.get("duration")
 
-        if not age or not weight or not height:
-            return jsonify({"error": "Missing required fields"}), 400
-
         prompt = f"""
         Create a professional {duration}-day Indian diet plan.
 
@@ -43,13 +40,10 @@ def generate():
         - Snacks
         - Dinner
         - Approx daily calories
-        - Protein focus if muscle gain
-
-        Format clearly day-wise.
         """
 
         response = client.models.generate_content(
-            model="model="gemini-2.5-flash",
+            model="gemini-2.5-flash",
             contents=prompt
         )
 
@@ -65,4 +59,3 @@ def generate():
 
 if __name__ == "__main__":
     app.run()
-

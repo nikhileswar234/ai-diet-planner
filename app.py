@@ -1,84 +1,83 @@
-import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from google import genai
+import google.generativeai as genai
 from datetime import datetime
+import os
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# 🔐 SET YOUR GEMINI KEY HERE
+genai.configure(api_key="YOUR_GEMINI_API_KEY")
 
-# Daily quota tracker
+model = genai.GenerativeModel("gemini-1.0-pro")
+
+# Daily limit storage
 daily_count = 0
-current_day = datetime.utcnow().date()
-MAX_DAILY_LIMIT = 20
-
-
-@app.route("/")
-def home():
-    return "AI Diet Planner Backend Running 🚀"
+current_date = datetime.now().date()
 
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    global daily_count, current_day
+    global daily_count, current_date
 
-    today = datetime.utcnow().date()
-
-    if today != current_day:
+    if datetime.now().date() != current_date:
         daily_count = 0
-        current_day = today
+        current_date = datetime.now().date()
 
-    if daily_count >= MAX_DAILY_LIMIT:
+    if daily_count >= 20:
         return jsonify({
             "limit": True,
-            "message": "Sorry, there are only 20 AI plans allowed per day. Please try again tomorrow 🙏"
+            "message": "Sorry there is only 20 quote per day try again tomorrow"
         })
 
-    try:
-        data = request.get_json()
+    data = request.json
 
-        age = data.get("age")
-        weight = data.get("weight")
-        height = data.get("height")
-        goal = data.get("goal")
-        diet_type = data.get("dietType")
-        duration = data.get("duration")
+    prompt = f"""
+    Create a professional Indian diet plan.
 
-        prompt = f"""
-        Create a professional {duration}-day Indian diet plan.
+    Age: {data['age']}
+    Weight: {data['weight']} kg
+    Height: {data['height']} cm
+    Goal: {data['goal']}
+    Diet Type: {data['dietType']}
+    Duration: {data['duration']} days
 
-        Age: {age}
-        Weight: {weight} kg
-        Height: {height} cm
-        Goal: {goal}
-        Diet Type: {diet_type}
+    Give structured meal plan day-wise.
+    """
 
-        Include:
-        - Breakfast
-        - Lunch
-        - Snacks
-        - Dinner
-        - Approximate daily calories
-        """
+    response = model.generate_content(prompt)
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+    daily_count += 1
 
-        daily_count += 1
+    return jsonify({
+        "limit": False,
+        "plan": response.text
+    })
 
-        return jsonify({
-            "plan": response.text,
-            "remaining": MAX_DAILY_LIMIT - daily_count
-        })
 
-    except Exception:
-        return jsonify({
-            "message": "AI is temporarily busy. Please try again later."
-        }), 500
+@app.route("/download", methods=["POST"])
+def download():
+    content = request.json["content"]
+
+    file_path = "diet_report.pdf"
+    doc = SimpleDocTemplate(file_path)
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph("<b>AI Diet Plan Report</b>", styles["Title"]))
+    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Paragraph(content.replace("\n", "<br/>"), styles["Normal"]))
+
+    doc.build(elements)
+
+    return send_file(file_path, as_attachment=True)
 
 
 if __name__ == "__main__":

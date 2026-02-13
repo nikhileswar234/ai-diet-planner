@@ -1,4 +1,4 @@
-const backendURL = "https://ai-diet-planner-otbr.onrender.com";
+const backendURL = " https://ai-diet-planner-3zig.onrender.com";
 
 let useFeet = false;
 let latestPlan = "";
@@ -72,3 +72,4 @@ function downloadPDF() {
     link.click();
   });
 }
+

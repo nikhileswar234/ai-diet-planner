@@ -1,21 +1,21 @@
 body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.card {
-  backdrop-filter: blur(20px);
-  background: rgba(255,255,255,0.15);
-  padding: 30px;
+.container {
   width: 400px;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  color: white;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 h1 {
@@ -24,44 +24,27 @@ h1 {
 
 input, select {
   width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-.generate-btn, #downloadBtn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: #00c9a7;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.unit-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.unit-buttons button {
-  flex: 1;
   padding: 8px;
-  border-radius: 8px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #4CAF50;
+  color: white;
   border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.unit-buttons .active {
-  background: #00c9a7;
-  color: white;
+button:hover {
+  background: #45a049;
 }
 
 #result {
-  white-space: pre-wrap;
   margin-top: 15px;
+  white-space: pre-wrap;
 }

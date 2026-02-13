@@ -1,136 +1,67 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  transition: 0.3s;
-}
-
-.top-bar {
+  font-family: Arial;
+  background: linear-gradient(135deg,#1e3c72,#2a5298);
   display: flex;
-  justify-content: space-between;
-  padding: 15px 30px;
-  background: #2c3e50;
-  color: white;
-}
-
-#darkToggle {
-  font-size: 20px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: none;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .card {
-  width: 420px;
-  margin: 40px auto;
-  padding: 25px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.15);
+  padding: 30px;
+  width: 400px;
   border-radius: 20px;
-  background: white;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  transition: 0.3s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  color: white;
+}
+
+h1 {
+  text-align: center;
 }
 
 input, select {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  border: none;
+  outline: none;
 }
 
 .generate-btn, #downloadBtn {
   width: 100%;
   padding: 12px;
-  margin-top: 10px;
   border: none;
-  background: #27ae60;
-  color: white;
   border-radius: 10px;
-  cursor: pointer;
+  background: #00c9a7;
+  color: white;
   font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-#downloadBtn {
-  background: #2980b9;
-}
-
-.height-section {
-  margin-top: 5px;
-}
-
-.toggle-container {
+.unit-buttons {
   display: flex;
-  align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
 }
 
-.switch {
-  position: relative;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider {
-  position: absolute;
+.unit-buttons button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  background-color: #ccc;
-  border-radius: 24px;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transition: 0.3s;
 }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-input:checked + .slider {
-  background-color: #27ae60;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.toggle-container span {
-  font-weight: bold;
-  opacity: 0.6;
-}
-
-.toggle-container span.active {
-  opacity: 1;
-}
-
-/* DARK MODE */
-body.dark {
-  background: #121212;
+.unit-buttons .active {
+  background: #00c9a7;
   color: white;
 }
 
-body.dark .card {
-  background: #1f1f1f;
-  color: white;
-}
-
-body.dark input,
-body.dark select {
-  background: #2c2c2c;
-  color: white;
-  border: 1px solid #555;
+#result {
+  white-space: pre-wrap;
+  margin-top: 15px;
 }

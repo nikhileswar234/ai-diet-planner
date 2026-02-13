@@ -46,7 +46,7 @@ async function generatePlan() {
   downloadBtn.style.display = "none";
 
   try {
-    const response = await fetch("/generate", {
+    const response = await fetch("https://ai-diet-planner-3zig.onrender.com/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -86,3 +86,4 @@ function downloadPDF() {
 
   window.URL.revokeObjectURL(url);
 }
+

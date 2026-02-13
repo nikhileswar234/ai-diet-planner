@@ -1,75 +1,88 @@
-const backendURL = " https://ai-diet-planner-3zig.onrender.com";
+const cmBtn = document.getElementById("cmBtn");
+const ftBtn = document.getElementById("ftBtn");
+const heightCmInput = document.getElementById("heightCm");
+const feetInputs = document.getElementById("feetInputs");
 
-let useFeet = false;
-let latestPlan = "";
+cmBtn.addEventListener("click", () => {
+  cmBtn.classList.add("active");
+  ftBtn.classList.remove("active");
+  heightCmInput.style.display = "block";
+  feetInputs.style.display = "none";
+});
 
-document.getElementById("cmBtn").onclick = function() {
-  useFeet = false;
-  document.getElementById("heightCm").style.display = "block";
-  document.getElementById("feetInputs").style.display = "none";
-  this.classList.add("active");
-  document.getElementById("ftBtn").classList.remove("active");
-};
+ftBtn.addEventListener("click", () => {
+  ftBtn.classList.add("active");
+  cmBtn.classList.remove("active");
+  heightCmInput.style.display = "none";
+  feetInputs.style.display = "block";
+});
 
-document.getElementById("ftBtn").onclick = function() {
-  useFeet = true;
-  document.getElementById("heightCm").style.display = "none";
-  document.getElementById("feetInputs").style.display = "block";
-  this.classList.add("active");
-  document.getElementById("cmBtn").classList.remove("active");
-};
+async function generatePlan() {
 
-function generatePlan() {
-
-  const age = age.value;
-  const weight = weight.value;
+  const age = document.getElementById("age").value;
+  const weight = document.getElementById("weight").value;
+  const goal = document.getElementById("goal").value;
+  const diet = document.getElementById("dietType").value;
+  const duration = document.getElementById("duration").value;
+  const resultDiv = document.getElementById("result");
+  const downloadBtn = document.getElementById("downloadBtn");
 
   let height;
 
-  if (useFeet) {
+  if (heightCmInput.style.display !== "none") {
+    height = document.getElementById("heightCm").value;
+  } else {
     const feet = document.getElementById("heightFeet").value;
     const inches = document.getElementById("heightInches").value;
-    height = (feet * 30.48) + (inches * 2.54);
-  } else {
-    height = document.getElementById("heightCm").value;
+    height = (feet * 30.48 + inches * 2.54).toFixed(1);
   }
 
-  const goal = goal.value;
-  const dietType = dietType.value;
-  const duration = duration.value;
+  if (!age || !weight || !height) {
+    alert("Please fill all fields.");
+    return;
+  }
 
-  fetch(`${backendURL}/generate`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({age, weight, height, goal, dietType, duration})
-  })
-  .then(res => res.json())
-  .then(data => {
+  resultDiv.innerHTML = "Generating plan...";
+  downloadBtn.style.display = "none";
 
-    if (data.limit) {
-      result.innerText = data.message;
+  try {
+    const response = await fetch("/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        age,
+        weight,
+        height,
+        goal,
+        diet,
+        duration
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      resultDiv.innerHTML = "Error: " + data.error;
       return;
     }
 
-    latestPlan = data.plan;
-    result.innerText = data.plan;
+    resultDiv.innerHTML = data.plan.replace(/\n/g, "<br>");
     downloadBtn.style.display = "block";
-  });
+
+  } catch (error) {
+    resultDiv.innerHTML = "Something went wrong.";
+  }
 }
 
 function downloadPDF() {
+  const content = document.getElementById("result").innerText;
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = window.URL.createObjectURL(blob);
 
-  fetch(`${backendURL}/download`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({content: latestPlan})
-  })
-  .then(res => res.blob())
-  .then(blob => {
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "DietPlan.pdf";
-    link.click();
-  });
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "AI_Diet_Plan.txt";
+  a.click();
+
+  window.URL.revokeObjectURL(url);
 }
-

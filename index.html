@@ -6,29 +6,29 @@
 </head>
 <body>
 
-  <div class="top-bar">
-    <h2>🥗 AI Diet Planner</h2>
-    <button id="darkToggle">🌙</button>
-  </div>
+<div class="container">
 
   <div class="card">
+    <h1>🥗 AI Diet Planner</h1>
 
     <input type="number" id="age" placeholder="Age">
     <input type="number" id="weight" placeholder="Weight (kg)">
 
     <!-- Height Section -->
-    <div class="height-section">
-      <div class="toggle-container">
-        <span id="cmLabel" class="active">CM</span>
-        <label class="switch">
-          <input type="checkbox" id="unitToggle">
-          <span class="slider"></span>
-        </label>
-        <span id="feetLabel">Feet</span>
+    <div class="height-box">
+
+      <div class="unit-buttons">
+        <button id="cmBtn" class="active">CM</button>
+        <button id="ftBtn">Feet/Inches</button>
       </div>
 
       <input type="number" id="heightCm" placeholder="Height (cm)">
-      <input type="number" id="heightFeet" placeholder="Height (feet)" style="display:none;">
+
+      <div id="feetInputs" style="display:none;">
+        <input type="number" id="heightFeet" placeholder="Feet">
+        <input type="number" id="heightInches" placeholder="Inches">
+      </div>
+
     </div>
 
     <select id="goal">
@@ -49,10 +49,16 @@
     </select>
 
     <button class="generate-btn" onclick="generatePlan()">Generate Plan</button>
-    <button id="downloadBtn" onclick="downloadPlan()" style="display:none;">Download Plan</button>
 
     <div id="result"></div>
+
+    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
+      Download PDF
+    </button>
+
   </div>
+
+</div>
 
 <script src="script.js"></script>
 </body>

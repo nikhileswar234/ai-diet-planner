@@ -1,25 +1,28 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from flask_cors import CORS
 import google.generativeai as genai
 from datetime import datetime
 import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib import colors
-from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 
 app = Flask(__name__)
 CORS(app)
 
-# 🔐 SET YOUR GEMINI KEY HERE
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+# ✅ Use environment variable for security
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-1.0-pro")
 
-# Daily limit storage
 daily_count = 0
 current_date = datetime.now().date()
+
+
+# ✅ HOME ROUTE (THIS FIXES 404)
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 
 @app.route("/generate", methods=["POST"])
@@ -65,20 +68,4 @@ def generate():
 def download():
     content = request.json["content"]
 
-    file_path = "diet_report.pdf"
-    doc = SimpleDocTemplate(file_path)
-
-    styles = getSampleStyleSheet()
-    elements = []
-
-    elements.append(Paragraph("<b>AI Diet Plan Report</b>", styles["Title"]))
-    elements.append(Spacer(1, 0.5 * inch))
-    elements.append(Paragraph(content.replace("\n", "<br/>"), styles["Normal"]))
-
-    doc.build(elements)
-
-    return send_file(file_path, as_attachment=True)
-
-
-if __name__ == "__main__":
-    app.run()
+    file_path = "diet

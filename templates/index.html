@@ -2,44 +2,27 @@
 <html>
 <head>
   <title>AI Diet Planner</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <div class="container">
-
   <div class="card">
     <h1>🥗 AI Diet Planner</h1>
 
     <input type="number" id="age" placeholder="Age">
     <input type="number" id="weight" placeholder="Weight (kg)">
-
-    <!-- Height Section -->
-    <div class="height-box">
-
-      <div class="unit-buttons">
-        <button id="cmBtn" class="active">CM</button>
-        <button id="ftBtn">Feet/Inches</button>
-      </div>
-
-      <input type="number" id="heightCm" placeholder="Height (cm)">
-
-      <div id="feetInputs" style="display:none;">
-        <input type="number" id="heightFeet" placeholder="Feet">
-        <input type="number" id="heightInches" placeholder="Inches">
-      </div>
-
-    </div>
+    <input type="number" id="height" placeholder="Height (cm)">
 
     <select id="goal">
-      <option value="weight gain" selected>Weight Gain</option>
-      <option value="weight loss">Weight Loss</option>
-      <option value="muscle gain">Muscle Gain</option>
+      <option value="Weight Gain">Weight Gain</option>
+      <option value="Weight Loss">Weight Loss</option>
+      <option value="Muscle Gain">Muscle Gain</option>
     </select>
 
-    <select id="dietType">
-      <option value="veg">Vegetarian</option>
-      <option value="non-veg">Non-Vegetarian</option>
+    <select id="diet">
+      <option value="Vegetarian">Vegetarian</option>
+      <option value="Non-Vegetarian">Non-Vegetarian</option>
     </select>
 
     <select id="duration">
@@ -48,18 +31,12 @@
       <option value="30">30 Days</option>
     </select>
 
-    <button class="generate-btn" onclick="generatePlan()">Generate Plan</button>
+    <button onclick="generatePlan()">Generate Plan</button>
 
     <div id="result"></div>
-
-    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
-      Download PDF
-    </button>
-
   </div>
-
 </div>
 
-<script src="script.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

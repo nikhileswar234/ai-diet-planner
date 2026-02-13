@@ -10,29 +10,33 @@ from reportlab.lib.units import inch
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Use environment variable for security
+# 🔐 Use environment variable for security (SET THIS IN RENDER)
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-1.0-pro")
 
+# Daily limit
 daily_count = 0
 current_date = datetime.now().date()
 
 
-# ✅ HOME ROUTE (THIS FIXES 404)
+# ✅ Home Route (Fixes 404)
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# ✅ Generate Diet Plan
 @app.route("/generate", methods=["POST"])
 def generate():
     global daily_count, current_date
 
+    # Reset count if new day
     if datetime.now().date() != current_date:
         daily_count = 0
         current_date = datetime.now().date()
 
+    # Limit 20 per day
     if daily_count >= 20:
         return jsonify({
             "limit": True,
@@ -54,18 +58,43 @@ def generate():
     Give structured meal plan day-wise.
     """
 
-    response = model.generate_content(prompt)
+    try:
+        response = model.generate_content(prompt)
+        plan_text = response.text
+    except Exception as e:
+        return jsonify({
+            "limit": False,
+            "plan": "Error generating plan. Please check API key."
+        })
 
     daily_count += 1
 
     return jsonify({
         "limit": False,
-        "plan": response.text
+        "plan": plan_text
     })
 
 
+# ✅ Download PDF
 @app.route("/download", methods=["POST"])
 def download():
     content = request.json["content"]
 
-    file_path = "diet
+    file_path = "diet_report.pdf"
+    doc = SimpleDocTemplate(file_path)
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph("<b>AI Diet Plan Report</b>", styles["Title"]))
+    elements.append(Spacer(1, 0.5 * inch))
+    elements.append(Paragraph(content.replace("\n", "<br/>"), styles["Normal"]))
+
+    doc.build(elements)
+
+    return send_file(file_path, as_attachment=True)
+
+
+# ✅ Required for local run (Render uses gunicorn)
+if __name__ == "__main__":
+    app.run(debug=True)

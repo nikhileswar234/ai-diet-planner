@@ -8,11 +8,25 @@
 
 <div class="container">
   <div class="card">
+
     <h1>🥗 AI Diet Planner</h1>
 
     <input type="number" id="age" placeholder="Age">
     <input type="number" id="weight" placeholder="Weight (kg)">
-    <input type="number" id="height" placeholder="Height (cm)">
+
+    <div class="height-section">
+      <div class="unit-buttons">
+        <button id="cmBtn" class="active">CM</button>
+        <button id="ftBtn">Feet/Inches</button>
+      </div>
+
+      <input type="number" id="heightCm" placeholder="Height (cm)">
+
+      <div id="feetInputs" style="display:none;">
+        <input type="number" id="heightFeet" placeholder="Feet">
+        <input type="number" id="heightInches" placeholder="Inches">
+      </div>
+    </div>
 
     <select id="goal">
       <option value="Weight Gain">Weight Gain</option>
@@ -20,7 +34,7 @@
       <option value="Muscle Gain">Muscle Gain</option>
     </select>
 
-    <select id="diet">
+    <select id="dietType">
       <option value="Vegetarian">Vegetarian</option>
       <option value="Non-Vegetarian">Non-Vegetarian</option>
     </select>
@@ -31,9 +45,16 @@
       <option value="30">30 Days</option>
     </select>
 
-    <button onclick="generatePlan()">Generate Plan</button>
+    <button class="generate-btn" onclick="generatePlan()">
+      Generate Plan
+    </button>
 
     <div id="result"></div>
+
+    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
+      Download Plan
+    </button>
+
   </div>
 </div>
 

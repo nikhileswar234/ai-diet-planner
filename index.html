@@ -25,16 +25,17 @@
 
       <div class="height-wrapper">
         <select id="heightUnit" onchange="toggleHeightInputs()">
-          <option value="ft">Feet & Inches</option>
           <option value="cm">Centimeters</option>
+          <option value="ft">Feet & Inches</option>
         </select>
-          <div id="ftInput" style="display:none;">
-          <input type="number" id="heightFt" placeholder="Feet">
-          <input type="number" id="heightIn" placeholder="Inches">
-        </div>
-        
+
         <div id="cmInput">
           <input type="number" id="heightCm" placeholder="Height (cm)">
+        </div>
+
+        <div id="ftInput" style="display:none;">
+          <input type="number" id="heightFt" placeholder="Feet">
+          <input type="number" id="heightIn" placeholder="Inches">
         </div>
       </div>
 

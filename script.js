@@ -8,7 +8,13 @@ window.onload = function() {
   if (localStorage.getItem("user")) {
     document.getElementById("loginBox").style.display = "none";
   }
+
+  // Restore theme
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+  }
 };
+
 
 function toggleHeightInputs() {
   const unit = document.getElementById("heightUnit").value;
@@ -98,6 +104,7 @@ function downloadPDF() {
 function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
+
 
 
 

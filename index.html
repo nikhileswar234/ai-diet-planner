@@ -2,62 +2,69 @@
 <html>
 <head>
   <title>AI Diet Planner</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
+
+  <h1>🥗 AI Diet Planner</h1>
+
+  <div id="loginBox">
+    <input type="text" id="username" placeholder="Enter your name">
+    <button onclick="login()">Login</button>
+  </div>
+
   <div class="card">
 
-    <h1>🥗 AI Diet Planner</h1>
+    <div class="form-grid">
+      <input type="number" id="age" placeholder="Age">
+      <input type="number" id="weight" placeholder="Weight (kg)">
 
-    <input type="number" id="age" placeholder="Age">
-    <input type="number" id="weight" placeholder="Weight (kg)">
+      <div class="height-wrapper">
+        <select id="heightUnit" onchange="toggleHeightInputs()">
+          <option value="cm">Centimeters</option>
+          <option value="ft">Feet & Inches</option>
+        </select>
 
-    <div class="height-section">
-      <div class="unit-buttons">
-        <button id="cmBtn" class="active">CM</button>
-        <button id="ftBtn">Feet/Inches</button>
+        <div id="cmInput">
+          <input type="number" id="heightCm" placeholder="Height (cm)">
+        </div>
+
+        <div id="ftInput" style="display:none;">
+          <input type="number" id="heightFt" placeholder="Feet">
+          <input type="number" id="heightIn" placeholder="Inches">
+        </div>
       </div>
 
-      <input type="number" id="heightCm" placeholder="Height (cm)">
+      <select id="goal">
+        <option value="loss">Weight Loss</option>
+        <option value="gain">Weight Gain</option>
+        <option value="muscle">Muscle Gain</option>
+      </select>
 
-      <div id="feetInputs" style="display:none;">
-        <input type="number" id="heightFeet" placeholder="Feet">
-        <input type="number" id="heightInches" placeholder="Inches">
-      </div>
+      <select id="food">
+        <option value="veg">Vegetarian</option>
+        <option value="nonveg">Non-Vegetarian</option>
+      </select>
+
+      <select id="duration">
+        <option value="30">30 Days</option>
+        <option value="90">90 Days</option>
+      </select>
     </div>
 
-    <select id="goal">
-      <option value="Weight Gain">Weight Gain</option>
-      <option value="Weight Loss">Weight Loss</option>
-      <option value="Muscle Gain">Muscle Gain</option>
-    </select>
+    <button class="generate-btn" onclick="generate()">Generate AI Plan</button>
 
-    <select id="dietType">
-      <option value="Vegetarian">Vegetarian</option>
-      <option value="Non-Vegetarian">Non-Vegetarian</option>
-    </select>
+    <div id="result" class="result-box"></div>
 
-    <select id="duration">
-      <option value="7">7 Days</option>
-      <option value="14">14 Days</option>
-      <option value="30">30 Days</option>
-    </select>
-
-    <button class="generate-btn" onclick="generatePlan()">
-      Generate Plan
-    </button>
-
-    <div id="result"></div>
-
-    <button id="downloadBtn" onclick="downloadPDF()" style="display:none;">
-      Download Plan
-    </button>
+    <button class="pdf-btn" onclick="downloadPDF()">Download as PDF</button>
 
   </div>
+
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="script.js"></script>
 </body>
 </html>

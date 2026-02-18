@@ -5,14 +5,18 @@ function login() {
 }
 
 window.onload = function() {
+
+  // Hide login if user exists
   if (localStorage.getItem("user")) {
     document.getElementById("loginBox").style.display = "none";
   }
 
-  // Restore theme
-  if (localStorage.getItem("theme") === "dark") {
+  // Restore dark mode safely
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
   }
+
 };
 
 
@@ -101,15 +105,12 @@ function downloadPDF() {
   link.download = "AI_Diet_Plan.pdf";
   link.click();
 }
-function toggleDarkMode() {
-  document.body.classList.toggle("dark-mode");
-
-  if (document.body.classList.contains("dark-mode")) {
-    localStorage.setItem("theme", "dark");
-  } else {
-    localStorage.setItem("theme", "light");
-  }
+functionfunction toggleDarkMode() {
+  const isDark = document.body.classList.toggle("dark-mode");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
 }
+
+
 
 
 

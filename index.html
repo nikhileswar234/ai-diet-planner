@@ -3,9 +3,14 @@
 <head>
   <title>AI Diet Planner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+  <div class="top-bar">
+    <h2>🥗 AI Diet Planner</h2>
+    <button id="darkToggle">🌙</button>
+  </div>
 
 <div class="container">
 
@@ -68,4 +73,5 @@
 <script src="script.js"></script>
 </body>
 </html>
+
 

@@ -1,4 +1,7 @@
 body {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+body {
   font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #2d5be3, #22a66f);
   margin: 0;
@@ -77,6 +80,13 @@ input, select {
 body.dark-mode {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
 }
+body.dark-mode,
+body.dark-mode .card,
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode .result-box {
+  transition: background 0.3s ease, color 0.3s ease;
+}
 
 body.dark-mode .card {
   background: #1e1e1e;
@@ -103,4 +113,5 @@ body.dark-mode .generate-btn {
 body.dark-mode .pdf-btn {
   background: #16a34a;
 }
+
 

@@ -94,10 +94,19 @@ function generate() {
 function downloadPDF() {
   const content = document.getElementById("result").innerText;
 
-  if (!content) {
+  if (!content.trim()) {
     alert("Generate a plan first!");
     return;
   }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const lines = doc.splitTextToSize(content, 180);
+  doc.text(lines, 10, 10);
+
+  doc.save("AI_Diet_Plan.pdf");
+}
 
   const blob = new Blob([content], { type: "application/pdf" });
   const link = document.createElement("a");
@@ -109,6 +118,7 @@ functionfunction toggleDarkMode() {
   const isDark = document.body.classList.toggle("dark-mode");
   localStorage.setItem("theme", isDark ? "dark" : "light");
 }
+
 
 
 

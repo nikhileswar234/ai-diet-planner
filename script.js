@@ -1,91 +1,97 @@
-const cmBtn = document.getElementById("cmBtn");
-const ftBtn = document.getElementById("ftBtn");
-const heightCmInput = document.getElementById("heightCm");
-const feetInputs = document.getElementById("feetInputs");
+function login() {
+  const name = document.getElementById("username").value;
+  localStorage.setItem("user", name);
+  document.getElementById("loginBox").style.display = "none";
+}
 
-cmBtn.addEventListener("click", () => {
-  cmBtn.classList.add("active");
-  ftBtn.classList.remove("active");
-  heightCmInput.style.display = "block";
-  feetInputs.style.display = "none";
-});
+window.onload = function() {
+  if (localStorage.getItem("user")) {
+    document.getElementById("loginBox").style.display = "none";
+  }
+};
 
-ftBtn.addEventListener("click", () => {
-  ftBtn.classList.add("active");
-  cmBtn.classList.remove("active");
-  heightCmInput.style.display = "none";
-  feetInputs.style.display = "block";
-});
+function toggleHeightInputs() {
+  const unit = document.getElementById("heightUnit").value;
 
-async function generatePlan() {
+  if (unit === "cm") {
+    document.getElementById("cmInput").style.display = "block";
+    document.getElementById("ftInput").style.display = "none";
+  } else {
+    document.getElementById("cmInput").style.display = "none";
+    document.getElementById("ftInput").style.display = "flex";
+  }
+}
 
+function calculateBMI(weight, heightCm) {
+  const heightM = heightCm / 100;
+  return (weight / (heightM * heightM)).toFixed(1);
+}
+
+function generate() {
   const age = document.getElementById("age").value;
   const weight = document.getElementById("weight").value;
   const goal = document.getElementById("goal").value;
-  const diet = document.getElementById("dietType").value;
+  const food = document.getElementById("food").value;
   const duration = document.getElementById("duration").value;
-  const resultDiv = document.getElementById("result");
-  const downloadBtn = document.getElementById("downloadBtn");
 
   let height;
+  const unit = document.getElementById("heightUnit").value;
 
-  if (heightCmInput.style.display !== "none") {
+  if (unit === "cm") {
     height = document.getElementById("heightCm").value;
   } else {
-    const feet = document.getElementById("heightFeet").value;
-    const inches = document.getElementById("heightInches").value;
-    height = (feet * 30.48 + inches * 2.54).toFixed(1);
+    const ft = document.getElementById("heightFt").value || 0;
+    const inch = document.getElementById("heightIn").value || 0;
+    height = (ft * 30.48) + (inch * 2.54);
   }
 
-  if (!age || !weight || !height) {
-    alert("Please fill all fields.");
-    return;
-  }
+  const bmi = calculateBMI(weight, height);
 
-  resultDiv.innerHTML = "Generating plan...";
-  downloadBtn.style.display = "none";
+  document.getElementById("result").innerText =
+    "Your BMI: " + bmi + "\nGenerating plan...\n\n";
 
-  try {
-    const response = await fetch("https://ai-diet-planner-3zig.onrender.com/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        age,
-        weight,
-        height,
-        goal,
-        diet,
-        duration
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      resultDiv.innerHTML = "Error: " + data.error;
+  fetch("https://ai-diet-planner-otbr.onrender.com/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      age,
+      weight,
+      height,
+      goal,
+      dietType: food,
+      duration
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.limit) {
+      document.getElementById("result").innerText = data.message;
       return;
     }
 
-    resultDiv.innerHTML = data.plan.replace(/\n/g, "<br>");
-    downloadBtn.style.display = "block";
+    document.getElementById("result").innerText =
+      "Your BMI: " + bmi + "\n\n" + data.plan +
+      "\n\nRemaining AI plans today: " + data.remaining;
 
-  } catch (error) {
-    resultDiv.innerHTML = "Something went wrong.";
-  }
+    localStorage.setItem("lastWeight", weight);
+  })
+  .catch(() => {
+    document.getElementById("result").innerText =
+      "Unable to connect. Try again.";
+  });
 }
 
 function downloadPDF() {
   const content = document.getElementById("result").innerText;
-  const blob = new Blob([content], { type: "text/plain" });
-  const url = window.URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "AI_Diet_Plan.txt";
-  a.click();
+  if (!content) {
+    alert("Generate a plan first!");
+    return;
+  }
 
-  window.URL.revokeObjectURL(url);
+  const blob = new Blob([content], { type: "application/pdf" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "AI_Diet_Plan.pdf";
+  link.click();
 }
-
-
-

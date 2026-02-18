@@ -95,5 +95,8 @@ function downloadPDF() {
   link.download = "AI_Diet_Plan.pdf";
   link.click();
 }
+function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
+}
 
 

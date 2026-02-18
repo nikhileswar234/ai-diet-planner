@@ -114,10 +114,11 @@ function downloadPDF() {
   link.download = "AI_Diet_Plan.pdf";
   link.click();
 }
-functionfunction toggleDarkMode() {
-  const isDark = document.body.classList.toggle("dark-mode");
-  localStorage.setItem("theme", isDark ? "dark" : "light");
+function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
 }
+
+
 
 
 

@@ -108,15 +108,10 @@ function downloadPDF() {
   doc.save("AI_Diet_Plan.pdf");
 }
 
-  const blob = new Blob([content], { type: "application/pdf" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "AI_Diet_Plan.pdf";
-  link.click();
-}
 function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
+
 
 
 

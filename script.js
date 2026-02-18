@@ -102,8 +102,21 @@ function downloadPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  const pageHeight = doc.internal.pageSize.height;
+  const margin = 10;
+  const lineHeight = 7;
+
   const lines = doc.splitTextToSize(content, 180);
-  doc.text(lines, 10, 10);
+  let y = margin;
+
+  lines.forEach(line => {
+    if (y + lineHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+    doc.text(line, margin, y);
+    y += lineHeight;
+  });
 
   doc.save("AI_Diet_Plan.pdf");
 }
@@ -111,6 +124,7 @@ function downloadPDF() {
 function toggleDarkMode() {
   document.body.classList.toggle("dark-mode");
 }
+
 
 
 

@@ -50,7 +50,7 @@ function generate() {
   document.getElementById("result").innerText =
     "Your BMI: " + bmi + "\nGenerating plan...\n\n";
 
-  fetch("https://ai-diet-planner-otbr.onrender.com/generate", {
+  fetch("https://ai-diet-planner-3zig.onrender.com/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -95,3 +95,4 @@ function downloadPDF() {
   link.download = "AI_Diet_Plan.pdf";
   link.click();
 }
+

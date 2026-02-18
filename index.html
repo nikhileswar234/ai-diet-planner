@@ -1,16 +1,12 @@
+
 <!DOCTYPE html>
 <html>
 <head>
   <title>AI Diet Planner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="top-bar">
-    <h2>🥗 AI Diet Planner</h2>
-    <button id="darkToggle">🌙</button>
-  </div>
 
 <div class="container">
 
@@ -29,18 +25,17 @@
 
       <div class="height-wrapper">
         <select id="heightUnit" onchange="toggleHeightInputs()">
-           <option value="ft">Feet & Inches</option>
+          <option value="ft">Feet & Inches</option>
           <option value="cm">Centimeters</option>
         </select>
-
-         <div id="ftInput" style="display:none;">
+          <div id="ftInput" style="display:none;">
           <input type="number" id="heightFt" placeholder="Feet">
           <input type="number" id="heightIn" placeholder="Inches">
         </div>
+        
         <div id="cmInput">
           <input type="number" id="heightCm" placeholder="Height (cm)">
         </div>
-        
       </div>
 
       <select id="goal">
@@ -73,5 +68,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-
